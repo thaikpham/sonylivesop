@@ -150,55 +150,59 @@ const COMPLIMENT_TEXTS = [
   "Ảnh Sony quá mượt luôn 🚀",
 ];
 
+function generateSvgAvatar(initial: string, bgColor: string) {
+  return `data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='16' fill='${encodeURIComponent(bgColor)}'/%3E%3Ctext x='50%25' y='55%25' dominant-baseline='middle' text-anchor='middle' font-family='system-ui, sans-serif' font-weight='bold' font-size='14' fill='%23ffffff'%3E${initial}%3C/text%3E%3C/svg%3E`;
+}
+
 const COMMENT_POOL: FeedComment[] = [
   {
     id: 0,
     user: "Minh Pro",
     text: "Màu Sony đẹp quá, da người lên cực mịn!",
     color: "text-cyan-400",
-    avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=MinhPro",
+    avatar: generateSvgAvatar("M", "#22d3ee"),
   },
   {
     id: 1,
     user: "Lan Studio",
     text: "Độ nét đỉnh thật, nhìn như TVC luôn.",
     color: "text-pink-400",
-    avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=LanStudio",
+    avatar: generateSvgAvatar("L", "#f472b6"),
   },
   {
     id: 2,
     user: "Huy Media",
     text: "Dynamic range Sony quá ổn, không cháy highlight.",
     color: "text-yellow-400",
-    avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=HuyMedia",
+    avatar: generateSvgAvatar("H", "#eab308"),
   },
   {
     id: 3,
     user: "Khanh Film",
     text: "Tone màu cinematic, xem đã mắt ghê.",
     color: "text-green-400",
-    avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=KhanhFilm",
+    avatar: generateSvgAvatar("K", "#4ade80"),
   },
   {
     id: 4,
     user: "An Creator",
     text: "Chất lượng hình ảnh Sony đúng là khác biệt!",
     color: "text-purple-400",
-    avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=AnCreator",
+    avatar: generateSvgAvatar("A", "#c084fc"),
   },
   {
     id: 5,
     user: "Trung Live",
     text: "Chi tiết quá tốt, zoom vẫn nét căng.",
     color: "text-orange-400",
-    avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=TrungLive",
+    avatar: generateSvgAvatar("T", "#fb923c"),
   },
   {
     id: 6,
     user: "Mai Visual",
     text: "Sony stream mà tưởng quay hậu kỳ rồi.",
     color: "text-blue-400",
-    avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=MaiVisual",
+    avatar: generateSvgAvatar("M", "#60a5fa"),
   },
 ];
 
@@ -2106,15 +2110,7 @@ function PhoneMockup({
 
               <div className="flex items-center gap-2">
                 <div className="relative flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border border-white/35 bg-black/40 shadow-lg">
-                  <img
-                    src="https://www.pngkey.com/png/full/7-76761_alpha-logo-sony-alpha-logo-png.png"
-                    alt="Sony Vietnam avatar"
-                    className="absolute inset-0 z-10 h-full w-full scale-[0.88] rounded-full object-contain object-center"
-                    loading="lazy"
-                    onError={(e: SyntheticEvent<HTMLImageElement>) => {
-                      e.currentTarget.style.display = "none";
-                    }}
-                  />
+                  <span className="absolute inset-0 z-10 flex items-center justify-center text-[20px] font-bold text-[#f97316] font-serif select-none leading-none">α</span>
                 </div>
                 <div className="min-w-0">
                   <div className="text-[12px] font-bold leading-none drop-shadow-lg">@sony.vietnam</div>
