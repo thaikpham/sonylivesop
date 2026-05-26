@@ -7,9 +7,10 @@ import { ChecklistSection } from './components/ChecklistSection';
 import { TroubleshootingSection } from './components/TroubleshootingSection';
 import { FAQSection } from './components/FAQSection';
 import { ContentAISystem } from './components/ContentAISystem';
+import { SmartPricingSystem } from './components/SmartPricingSystem';
 import { LivestreamShowcasePage } from './pages/LivestreamShowcasePage';
 
-export type TabId = 'gear' | 'lighting' | 'software' | 'checklist' | 'trouble' | 'showcase' | 'faq' | 'content_ai';
+export type TabId = 'gear' | 'lighting' | 'software' | 'checklist' | 'trouble' | 'showcase' | 'faq' | 'content_ai' | 'pricing';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabId>('gear');
@@ -28,6 +29,7 @@ export default function App() {
             {activeTab === 'trouble' && <TroubleshootingSection />}
             {activeTab === 'faq' && <FAQSection />}
             {activeTab === 'content_ai' && <ContentAISystem />}
+            {activeTab === 'pricing' && <SmartPricingSystem />}
           </div>
         </div>
       )}
