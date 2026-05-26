@@ -530,3 +530,14 @@ body {
     font-size: clamp(3rem, 14vw, 5.5rem);
   }
 }
+
+/* ===== Material Symbols FOUT Protection ===== */
+.material-symbols-outlined {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  overflow: hidden;
+  white-space: nowrap;
+  word-wrap: normal;
+  vertical-align: middle;
+}
