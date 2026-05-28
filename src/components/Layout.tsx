@@ -58,7 +58,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <span className="text-[11px] font-bold tracking-[0.3em] text-[#666] uppercase">Master Console</span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight">
-            Sony <span className="text-white/30 font-medium italic">Pro Studio</span>
+            Sony <span className="text-white/30 font-medium italic">Live SOP</span>
           </h1>
         </div>
 
@@ -102,7 +102,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
               </div>
             </div>
             <p className="text-[11px] text-white/40 leading-relaxed font-medium">
-              Sony Pro Studio Master Console — Phiên bản Local Development.
+              Sony Live SOP Master Console — Phiên bản Local Development.
             </p>
           </div>
         </div>

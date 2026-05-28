@@ -8,16 +8,16 @@ interface Message {
   groundingMetadata?: any;
 }
 
-const DEFAULT_SYSTEM_INSTRUCTION = `Bạn là một chuyên gia tư vấn thiết bị Sony Pro Studio chuyên nghiệp, am hiểu sâu sắc về máy ảnh Sony Alpha, dòng Cinema Line (FX3, FX30), các loại ống kính (G Master, G Lens) và Ngành hàng âm thanh gồm loa, tai nghe và các giải pháp vận hành Livestream chuyên nghiệp.
+const DEFAULT_SYSTEM_INSTRUCTION = `Bạn là một chuyên gia tư vấn thiết bị Sony Live SOP chuyên nghiệp, am hiểu sâu sắc về máy ảnh Sony Alpha, dòng Cinema Line (FX3, FX30), các loại ống kính (G Master, G Lens) và Ngành hàng âm thanh gồm loa, tai nghe và các giải pháp vận hành Livestream chuyên nghiệp.
 
 HÃY TUÂN THỦ CÁC QUY TẮC SAU KHI PHẢN HỒI:
 - Tư vấn theo mô hình Good-Better-Best để khách hàng thấy được những options giá trị của line-up sản phẩm.
 - Liệt kê ngắn gọn và đưa ra 5 key selling points cho từng lựa chọn sản phẩm. No yapping
-- Luôn thân thiện, chuyên nghiệp, xưng hô là "Sony Pro Studio" hoặc "Trợ lý AI".
+- Luôn thân thiện, chuyên nghiệp, xưng hô là "Sony Live SOP" hoặc "Trợ lý AI".
 - Trả lời bằng Tiếng Việt rõ ràng. Sử dụng Markdown (in đậm, danh sách gạch đầu dòng, bảng so sánh) để câu trả lời dễ đọc.
 - Khi người dùng hỏi tư vấn combo livestream, hãy đề xuất combo dựa trên: Lĩnh vực kinh doanh (Thời trang, F&B, Review), Ngân sách, và Số lượng góc máy.
 - Đưa ra những phân tích cụ thể vì sao họ nên chọn thiết bị đó (Ví dụ: livestream quần áo nên chọn FX30 vì có màu da S-Cinetone đẹp và có quạt làm mát hoạt động cả ngày không bị ngắt).
-- Nếu câu hỏi không liên quan đến thiết bị Sony hoặc livestream, hãy lịch sự nhắc nhở họ rằng bạn là trợ lý chuyên biệt của Sony Pro Studio.
+- Nếu câu hỏi không liên quan đến thiết bị Sony hoặc livestream, hãy lịch sự nhắc nhở họ rằng bạn là trợ lý chuyên biệt của Sony Live SOP.
 - Khi được hỏi về các thông số kỹ thuật mới nhất, các sản phẩm mới ra mắt hoặc giá cả hiện hành, hãy chủ động sử dụng công cụ Tìm kiếm Google để truy cập trang web chính thức của Sony Việt Nam và Sony Alpha Vietnam tại đường dẫn chiến dịch chính thức sau để lấy thông tin, cào dữ liệu chính xác và đầy đủ nhất: https://www.sony.com.vn/?cid=sem-apac-203941&utm_source=Google&utm_campaign=FY26_Local_VN_TV_Hakuhodo_GG_Gross_SEM&utm_term=Gross&gad_source=1&gad_campaignid=23759861923&gclid=CjwKCAjwrNrQBhBjEiwAoR4VO3ZoO9G42dH9Y5Yg6h4-doT0iyHim9J9_82wJBIoQH3OHLHhrTdbAxoCd-0QAvD_BwE`;
 
 const SUGGESTIONS = [
@@ -32,7 +32,7 @@ export const ProductAdvisor: React.FC = () => {
     return [
       {
         role: 'model',
-        text: 'Xin chào! Tôi là Trợ Lý Wiki Sony AI. Tôi chuyên giải đáp kiến thức kỹ thuật, tư vấn thông số và khả năng kết nối của các dòng máy ảnh Alpha, Cinema Line (FX3, FX30), ống kính Sony G Master và microphone chính hãng. Ngoài ra, tôi có thể tư vấn cấu hình livestream tối ưu dựa trên 4 combo sản phẩm tiêu chuẩn của Sony Pro Studio. Bạn muốn bắt đầu tìm hiểu sản phẩm nào?',
+        text: 'Xin chào! Tôi là Trợ Lý Wiki Sony AI. Tôi chuyên giải đáp kiến thức kỹ thuật, tư vấn thông số và khả năng kết nối của các dòng máy ảnh Alpha, Cinema Line (FX3, FX30), ống kính Sony G Master và microphone chính hãng. Ngoài ra, tôi có thể tư vấn cấu hình livestream tối ưu dựa trên 4 combo sản phẩm tiêu chuẩn của Sony Live SOP. Bạn muốn bắt đầu tìm hiểu sản phẩm nào?',
         timestamp: new Date()
       }
     ];
@@ -191,7 +191,7 @@ export const ProductAdvisor: React.FC = () => {
         const lowercaseInput = textToSend.toLowerCase();
 
         if (lowercaseInput.includes('quần áo') || lowercaseInput.includes('thời trang') || lowercaseInput.includes('bán hàng')) {
-          reply = `Chào bạn! Để livestream bán hàng quần áo / thời trang chuyên nghiệp, Sony Pro Studio khuyên bạn nên sử dụng cấu hình **Combo 2: Sony FX30 Pro**.
+          reply = `Chào bạn! Để livestream bán hàng quần áo / thời trang chuyên nghiệp, Sony Live SOP khuyên bạn nên sử dụng cấu hình **Combo 2: Sony FX30 Pro**.
           
 ### Tại sao cấu hình này tối ưu cho bạn?
 1. **Sony FX30 (Camera Cinema):** Cảm biến Super35 cực nét, tích hợp sẵn hệ màu da **S-Cinetone** hồng hào, tự nhiên mà không cần chỉnh màu hay bộ lọc phức tạp. Thiết bị có **quạt tản nhiệt chủ động**, hỗ trợ livestream 24/7 liên tục mà không bao giờ lo quá nhiệt sập nguồn.
@@ -200,7 +200,7 @@ export const ProductAdvisor: React.FC = () => {
 
 *Mẹo: Bạn có thể chuyển sang tab **Báo Giá Thông Minh** để xem chi tiết đơn giá của từng thiết bị này.*
 
-*(Lưu ý: Đây là câu trả lời tự động ở chế độ Demo Offline của Sony Pro Studio).*`;
+*(Lưu ý: Đây là câu trả lời tự động ở chế độ Demo Offline của Sony Live SOP).*`;
         } else if (lowercaseInput.includes('fx30') && (lowercaseInput.includes('a7 iv') || lowercaseInput.includes('alpha 7'))) {
           reply = `So sánh giữa **Sony FX30** và **Sony Alpha 7 IV (A7M4)** cho nhu cầu livestream chuyên nghiệp:
 
@@ -216,7 +216,7 @@ export const ProductAdvisor: React.FC = () => {
 - Nên chọn **FX30** nếu mục tiêu chính là livestream liên tục thời gian dài (bán hàng, sự kiện), cần độ tin cậy tuyệt đối về nhiệt độ và muốn tiết kiệm chi phí ống kính.
 - Nên chọn **Alpha 7 IV** nếu bạn muốn kết hợp chụp ảnh chuyên nghiệp chất lượng cao (33MP) và livestream ở môi trường thiếu sáng, cần hiệu ứng xóa phông mượt mà của cảm biến Full Frame.
 
-*(Lưu ý: Đây là câu trả lời tự động ở chế độ Demo Offline của Sony Pro Studio).*`;
+*(Lưu ý: Đây là câu trả lời tự động ở chế độ Demo Offline của Sony Live SOP).*`;
         } else if (lowercaseInput.includes('1 góc') || lowercaseInput.includes('tiết kiệm') || lowercaseInput.includes('rẻ nhất')) {
           reply = `Nếu bạn đang tìm kiếm giải pháp livestream 1 góc máy đơn giản, cơ động và tiết kiệm nhất, **Combo 1: Sony ZV-E10 II Lite** là sự lựa chọn hoàn hảo:
 
@@ -224,9 +224,9 @@ export const ProductAdvisor: React.FC = () => {
 - **Giá tham khảo cả combo:** Khoảng ~76.000.000đ (Đã bao gồm Laptop gaming ASUS, Capture card Elgato Camlink 4K, tripod video Benro, Pin ảo DC-C1 cấp nguồn cả ngày và L-Plate để quay dọc màn hình điện thoại).
 - **Phù hợp với:** Các vloggers cá nhân làm review, talkshow nhỏ, hoặc các chủ shop tự livestream một mình tại nhà.
 
-*(Lưu ý: Đây là câu trả lời tự động ở chế độ Demo Offline của Sony Pro Studio).*`;
+*(Lưu ý: Đây là câu trả lời tự động ở chế độ Demo Offline của Sony Live SOP).*`;
         } else if (lowercaseInput.includes('âm thanh') || lowercaseInput.includes('mic') || lowercaseInput.includes('vang')) {
-          reply = `Giải pháp xử lý âm thanh livestream từ chuyên gia Sony Pro Studio:
+          reply = `Giải pháp xử lý âm thanh livestream từ chuyên gia Sony Live SOP:
 
 1. **Vấn đề phòng bị vang:**
    - Dán mút tiêu âm hoặc rèm vải dày tại các mảng tường trống đối diện người nói để triệt tiêu sóng âm phản xạ.
@@ -236,9 +236,9 @@ export const ProductAdvisor: React.FC = () => {
    - **Micro Shotgun Sony ECM-B1M:** Gắn trực tiếp lên hotshoe máy ảnh, lọc âm hướng định hướng phía trước cực tốt mà không cần dây nhợ rườm rà.
    - **Micro Condenser Sony C-80 (Studio):** Chất lượng âm thanh ấm áp, dày dặn chuyên nghiệp. Thích hợp cho phòng live ASMR hoặc talkshow tĩnh ít di chuyển.
 
-*(Lưu ý: Đây là câu trả lời tự động ở chế độ Demo Offline của Sony Pro Studio).*`;
+*(Lưu ý: Đây là câu trả lời tự động ở chế độ Demo Offline của Sony Live SOP).*`;
         } else {
-          reply = `Chào bạn! Tôi là Trợ lý AI của Sony Pro Studio.
+          reply = `Chào bạn! Tôi là Trợ lý AI của Sony Live SOP.
           
 Hiện tại tôi đang hoạt động ở **Chế độ Demo (Offline)**. 
 
@@ -552,7 +552,7 @@ Trong chế độ Demo, tôi có thể trả lời tốt các chủ đề về:
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder={loading ? 'Vui lòng chờ AI phản hồi...' : 'Hỏi trợ lý Sony Pro Studio về sản phẩm...'}
+            placeholder={loading ? 'Vui lòng chờ AI phản hồi...' : 'Hỏi trợ lý Sony Live SOP về sản phẩm...'}
             disabled={loading}
             className="flex-1 bg-white/[0.03] hover:bg-white/[0.05] border border-white/10 rounded-2xl px-5 py-3 text-xs text-white placeholder-white/30 focus:outline-none focus:border-purple-500/40 transition-all"
           />

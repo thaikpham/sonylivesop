@@ -655,7 +655,7 @@ export const SmartPricingSystem: React.FC = () => {
         <div className="space-y-2">
           <h2 className="text-3xl font-bold shimmer-text">Báo Giá Livestream Thông Minh</h2>
           <p className="text-white/50 text-sm max-w-xl">
-            Tối ưu hóa ngân sách và cấu hình thiết bị Sony Pro Studio chuyên nghiệp phù hợp với nhu cầu của bạn.
+            Tối ưu hóa ngân sách và cấu hình thiết bị Sony Live SOP chuyên nghiệp phù hợp với nhu cầu của bạn.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -1114,7 +1114,7 @@ export const SmartPricingSystem: React.FC = () => {
                   SONY
                 </div>
                 <div className="text-[10px] font-bold tracking-widest text-[#008a00] uppercase">
-                  PRO STUDIO PARTNER
+                  LIVE SOP PARTNER
                 </div>
                 <div className="text-[9px] text-gray-500 max-w-[200px] leading-tight">
                   Tòa nhà Sony Pro, Quận 1, TP. Hồ Chí Minh
@@ -1137,7 +1137,7 @@ export const SmartPricingSystem: React.FC = () => {
             <div className="grid grid-cols-2 gap-4 text-[11px] border-b border-gray-100 pb-4">
               <div className="space-y-0.5">
                 <span className="text-[9px] font-bold uppercase tracking-wider text-gray-400">Đơn vị cung cấp</span>
-                <p className="font-bold text-gray-900">Sony Pro Studio Vietnam</p>
+                <p className="font-bold text-gray-900">Sony Live SOP Vietnam</p>
                 <p className="text-gray-500 text-[10px]">Hệ thống thiết bị Livestream và Cinema Line chính hãng</p>
               </div>
 
@@ -1257,7 +1257,7 @@ export const SmartPricingSystem: React.FC = () => {
               </div>
 
               <div className="flex flex-col items-center justify-between text-center min-h-[90px]">
-                <span className="font-bold uppercase tracking-wider text-gray-500">Đại diện Sony Pro Studio</span>
+                <span className="font-bold uppercase tracking-wider text-gray-500">Đại diện Sony Live SOP</span>
                 <div className="w-16 h-8 border-b border-gray-200 border-dashed"></div> {/* Seal space */}
                 <span className="font-bold text-gray-900">Ban quản lý Dự án</span>
               </div>
