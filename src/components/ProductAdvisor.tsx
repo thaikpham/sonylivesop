@@ -8,42 +8,23 @@ interface Message {
   groundingMetadata?: any;
 }
 
-const DEFAULT_SYSTEM_INSTRUCTION = `Bạn là một chuyên gia tư vấn thiết bị Sony Pro Studio chuyên nghiệp, am hiểu sâu sắc về máy ảnh Sony Alpha, dòng Cinema Line (FX3, FX30), các loại ống kính (G Master, G Lens) và các giải pháp vận hành Livestream chuyên nghiệp.
-
-Dưới đây là danh sách thiết bị chính hãng Sony và đối tác trong cơ sở dữ liệu của bạn:
-1. Máy ảnh (Cameras):
-- Sony ZV-E10: Máy quay vlog phân khúc phổ thông. Thích hợp cho cá nhân quay vlog đơn giản, chụp ảnh cơ bản. (Giá tham khảo: 14.717.455đ)
-- Sony ZV-E10 II (Kit 16-50mm): Bản nâng cấp mạnh mẽ với quay 4K 60p, lấy nét mắt AI cực nhanh. Khuyên dùng làm Cam Cận quay chi tiết sản phẩm. (Giá: 28.990,000đ)
-- Sony Alpha 7 IV (ILCE-7M4): Máy ảnh Full Frame 33MP đẳng cấp, dải nhạy sáng 15+ stop. Phù hợp làm Cam Chính cho khung hình toàn cảnh sắc nét, màu sắc da tự nhiên. (Giá: 59.990.000đ)
-- Sony FX30: Máy quay Cinema Line cảm biến Super35. Có quạt tản nhiệt chủ động giúp livestream liên tục 24/7 không lo quá nhiệt, màu da S-Cinetone cực đẹp. (Giá: 46.990.000đ)
-- Sony FX3: Máy quay Cinema Full Frame cao cấp. Khả năng quay thiếu sáng đỉnh cao, có báng tay cầm tích hợp XLR audio. Phù hợp cho Studio điện ảnh/Talkshow cao cấp. (Giá: 93.990.000đ)
-
-2. Ống kính (Lenses):
-- FE 18-105mm f/4 G OSS: Ống kính zoom điện tử (Power Zoom), cực kỳ đa dụng cho livestream từ cảnh toàn đến cận cảnh sản phẩm. (Giá: 12.753.818đ)
-- FE 24-70mm f/2.8 GM II: Ống kính G Master cao cấp nhất, khẩu độ lớn f/2.8, độ sắc nét tuyệt đối, màu sắc trung thực. (Giá: 54.990.000đ)
-- FE 70-200mm f/4 Macro G II: Ống kính chuyên quay chân dung/cận cảnh và macro sản phẩm ở khoảng cách xa. (Giá: 39.262.909đ)
-- FE 90mm f/2.8 G Macro OSS: Ống kính chuyên biệt để quay cận cảnh sản phẩm nhỏ, món ăn, mỹ phẩm siêu sắc nét. (Giá: 23.990.000đ)
-
-3. Âm thanh & Vận hành (Audio & Ops):
-- Micro Sony ECM-W3S: Hệ thống micro không dây thu âm đối thoại chất lượng cao. (Giá: 8.826.545đ)
-- Pin ảo Sony DC-C1: Thiết bị cấp nguồn liên tục cho máy ảnh từ nguồn điện AC, giúp máy chạy ổn định toàn thời gian và hỗ trợ tản nhiệt. (Giá: 3.622.909đ)
-- Blackmagic ATEM Mini Pro: Bộ trộn hình ảnh switcher 4 cổng HDMI chuyên nghiệp. (Giá: 8.688.000đ)
-- Elgato Camlink 4K: Thiết bị chuyển đổi tín hiệu HDMI sang USB-C. (Giá: 3.000.000đ)
-- Laptop ASUS TUF Gaming F16: Laptop cấu hình mạnh mẽ phục vụ giải mã livestream OBS. (Giá: 23.490.000đ)
+const DEFAULT_SYSTEM_INSTRUCTION = `Bạn là một chuyên gia tư vấn thiết bị Sony Pro Studio chuyên nghiệp, am hiểu sâu sắc về máy ảnh Sony Alpha, dòng Cinema Line (FX3, FX30), các loại ống kính (G Master, G Lens) và Ngành hàng âm thanh gồm loa, tai nghe và các giải pháp vận hành Livestream chuyên nghiệp.
 
 HÃY TUÂN THỦ CÁC QUY TẮC SAU KHI PHẢN HỒI:
+- Tư vấn theo mô hình Good-Better-Best để khách hàng thấy được những options giá trị của line-up sản phẩm.
+- Liệt kê ngắn gọn và đưa ra 5 key selling points cho từng lựa chọn sản phẩm. No yapping
 - Luôn thân thiện, chuyên nghiệp, xưng hô là "Sony Pro Studio" hoặc "Trợ lý AI".
 - Trả lời bằng Tiếng Việt rõ ràng. Sử dụng Markdown (in đậm, danh sách gạch đầu dòng, bảng so sánh) để câu trả lời dễ đọc.
 - Khi người dùng hỏi tư vấn combo livestream, hãy đề xuất combo dựa trên: Lĩnh vực kinh doanh (Thời trang, F&B, Review), Ngân sách, và Số lượng góc máy.
 - Đưa ra những phân tích cụ thể vì sao họ nên chọn thiết bị đó (Ví dụ: livestream quần áo nên chọn FX30 vì có màu da S-Cinetone đẹp và có quạt làm mát hoạt động cả ngày không bị ngắt).
 - Nếu câu hỏi không liên quan đến thiết bị Sony hoặc livestream, hãy lịch sự nhắc nhở họ rằng bạn là trợ lý chuyên biệt của Sony Pro Studio.
-- Khi được hỏi về các thông số kỹ thuật mới nhất, các sản phẩm mới ra mắt hoặc giá cả hiện hành, hãy chủ động sử dụng công cụ Tìm kiếm Google để truy cập trang web chính thức của Sony Việt Nam (sony.com.vn) hoặc Sony Alpha Vietnam để lấy thông tin, cào dữ liệu chính xác và đầy đủ nhất nhằm cung cấp cho khách hàng.`;
+- Khi được hỏi về các thông số kỹ thuật mới nhất, các sản phẩm mới ra mắt hoặc giá cả hiện hành, hãy chủ động sử dụng công cụ Tìm kiếm Google để truy cập trang web chính thức của Sony Việt Nam và Sony Alpha Vietnam tại đường dẫn chiến dịch chính thức sau để lấy thông tin, cào dữ liệu chính xác và đầy đủ nhất: https://www.sony.com.vn/?cid=sem-apac-203941&utm_source=Google&utm_campaign=FY26_Local_VN_TV_Hakuhodo_GG_Gross_SEM&utm_term=Gross&gad_source=1&gad_campaignid=23759861923&gclid=CjwKCAjwrNrQBhBjEiwAoR4VO3ZoO9G42dH9Y5Yg6h4-doT0iyHim9J9_82wJBIoQH3OHLHhrTdbAxoCd-0QAvD_BwE`;
 
 const SUGGESTIONS = [
-  { text: 'Tư vấn combo live bán quần áo', icon: 'apparel' },
-  { text: 'Nên chọn Sony FX30 hay Alpha 7 IV?', icon: 'compare' },
-  { text: 'Setup livestream 1 góc máy tiết kiệm', icon: 'savings' },
-  { text: 'Giải pháp âm thanh chống vang, tạp âm', icon: 'mic' }
+  { text: 'So sánh Sony FX30 và Alpha 7 IV', icon: 'compare' },
+  { text: 'Mic Condenser Sony C-80 hoạt động thế nào?', icon: 'mic' },
+  { text: 'Ống kính FE 24-70mm GM II có gì nổi bật?', icon: 'photo_camera' },
+  { text: 'Các combo livestream chính hãng của Sony', icon: 'shopping_bag' }
 ];
 
 export const ProductAdvisor: React.FC = () => {
@@ -51,7 +32,7 @@ export const ProductAdvisor: React.FC = () => {
     return [
       {
         role: 'model',
-        text: 'Xin chào! Tôi là Trợ lý Tư vấn Sản phẩm AI từ Sony Pro Studio. Tôi có thể giúp bạn cấu hình hệ thống thiết bị livestream, so sánh tính năng máy ảnh Sony, hay đề xuất giải pháp quay chụp phù hợp nhất với nhu cầu của bạn. Bạn muốn bắt đầu từ đâu?',
+        text: 'Xin chào! Tôi là Trợ Lý Wiki Sony AI. Tôi chuyên giải đáp kiến thức kỹ thuật, tư vấn thông số và khả năng kết nối của các dòng máy ảnh Alpha, Cinema Line (FX3, FX30), ống kính Sony G Master và microphone chính hãng. Ngoài ra, tôi có thể tư vấn cấu hình livestream tối ưu dựa trên 4 combo sản phẩm tiêu chuẩn của Sony Pro Studio. Bạn muốn bắt đầu tìm hiểu sản phẩm nào?',
         timestamp: new Date()
       }
     ];
@@ -97,6 +78,13 @@ export const ProductAdvisor: React.FC = () => {
     if (migrated && savedModel) {
       localStorage.setItem('gemini_model', savedModel);
       setSelectedModel(savedModel);
+    }
+
+    // Sync localStorage prompt with the new default custom prompt
+    const savedInstruction = localStorage.getItem('gemini_system_instruction');
+    if (savedInstruction !== DEFAULT_SYSTEM_INSTRUCTION) {
+      localStorage.setItem('gemini_system_instruction', DEFAULT_SYSTEM_INSTRUCTION);
+      setSystemInstruction(DEFAULT_SYSTEM_INSTRUCTION);
     }
   }, []);
 

@@ -1,27 +1,49 @@
 import type { ReactNode } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { TabId } from '../App';
 
 interface LayoutProps {
   children: ReactNode;
-  activeTab: string;
-  onTabChange: (tab: TabId) => void;
 }
 
-export const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange }) => {
-  const tabs = [
-    { id: 'gear', label: 'Hệ Thống Thiết Bị', icon: 'photo_camera', sub: 'Camera & Combo' },
-    { id: 'lighting', label: 'Nghệ Thuật Ánh Sáng', icon: 'flare', sub: '3-Point & Mood' },
-    { id: 'software', label: 'Trung Tâm Điều Hành', icon: 'terminal', sub: 'OBS & Audio' },
-    { id: 'content_ai', label: 'Sáng Tạo Nội Dung AI', icon: 'psychology_alt', sub: 'Gemini Scripting', highlight: true },
-    { id: 'advisor', label: 'Trợ Lý Tư Vấn AI', icon: 'assistant', sub: 'Gemini Advisor', highlight: true },
-    { id: 'pricing', label: 'Báo Giá Thông Minh', icon: 'receipt_long', sub: 'Smart Invoice & PDF', highlight: true },
-    { id: 'checklist', label: 'Quy Trình Vận Hành', icon: 'assignment_turned_in', sub: 'Standard Checklist' },
-    { id: 'trouble', label: 'Trung Tâm Giải Nguy', icon: 'build', sub: 'Fix it fast' },
-    { id: 'faq', label: 'Tri Thức Chuyên Gia', icon: 'psychology', sub: 'Expert Insights' },
-    { id: 'showcase', label: 'Sony Showcase', icon: 'auto_awesome', sub: 'Virtual Tour' },
+export const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Map route path to TabId
+  const path = location.pathname.substring(1);
+  const activeTab = (path === 'content-ai' ? 'content_ai' : path) || 'gear';
+
+  const onTabChange = (tab: TabId) => {
+    const targetPath = tab === 'content_ai' ? 'content-ai' : tab;
+    navigate(`/${targetPath}`);
+  };
+
+  const sections = [
+    {
+      title: "Quy trình Setup Livestream (Staff Only)",
+      items: [
+        { id: 'gear', label: '1. Hệ Thống Combo Sony', icon: 'photo_camera', sub: 'Đề Xuất & Thiết Bị' },
+        { id: 'lighting', label: '2. Thiết Lập Ánh Sáng', icon: 'flare', sub: '3-Point & WB Gray Card' },
+        { id: 'software', label: '3. OBS & Âm Thanh', icon: 'terminal', sub: 'Routing & Cấu Hình Luồng' },
+        { id: 'checklist', label: '4. Checklist Vận Hành', icon: 'assignment_turned_in', sub: 'Kiểm Tra Trước Khi Live' },
+        { id: 'trouble', label: '5. Khắc Phục Sự Cố', icon: 'build', sub: 'Cẩm Nang Sửa Lỗi Nhanh' },
+      ]
+    },
+    {
+      title: "Trợ Lý AI & Báo Giá",
+      items: [
+        { id: 'advisor', label: 'Trợ Lý Wiki Sony AI', icon: 'assistant', sub: 'Tra Cứu Hình Ảnh & Âm Thanh', highlight: true },
+        { id: 'content_ai', label: 'Sáng Tạo Kịch Bản AI', icon: 'psychology_alt', sub: 'Gemini Scripting', highlight: true },
+        { id: 'pricing', label: 'Báo Giá Thông Minh', icon: 'receipt_long', sub: 'Smart Invoice & PDF', highlight: true },
+        { id: 'faq', label: 'Góc Tri Thức FAQ', icon: 'psychology', sub: 'Kỹ Thuật Thực Chiến' },
+        { id: 'showcase', label: 'Sony Showcase Tour', icon: 'auto_awesome', sub: 'Virtual Experience' },
+      ]
+    }
   ];
 
-  const currentTab = tabs.find(t => t.id === activeTab);
+  const allItems = sections.flatMap(s => s.items);
+  const currentTab = allItems.find(t => t.id === activeTab);
 
   return (
     <div className="flex h-screen w-screen bg-[#080808] overflow-hidden text-[#e8eaed]">
@@ -40,25 +62,34 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange
           </h1>
         </div>
 
-        <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto dark-scrollbar pb-6">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => onTabChange(tab.id as TabId)}
-              className={`w-full group flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 relative ${
-                activeTab === tab.id 
-                ? 'bg-white/[0.06] text-white shadow-[0_4px_20px_rgba(0,0,0,0.4)]' 
-                : 'text-[#666] hover:bg-white/[0.03] hover:text-white/80'
-              }`}
-            >
-              <span className={`material-symbols-outlined text-[24px] transition-all duration-300 ${activeTab === tab.id ? 'scale-110 text-white' : 'group-hover:text-white/60'} ${tab.highlight && activeTab !== tab.id ? 'text-purple-500/50' : ''}`}>
-                {tab.icon}
+        <nav className="flex-1 px-4 space-y-6 overflow-y-auto dark-scrollbar pb-6">
+          {sections.map((section, secIdx) => (
+            <div key={secIdx} className="space-y-2">
+              <span className="text-[9px] font-black tracking-[0.2em] text-[#555] uppercase pl-4 block">
+                {section.title}
               </span>
-              <div className="flex flex-col items-start text-left">
-                <span className={`text-[13px] font-bold tracking-wide transition-colors ${activeTab === tab.id ? 'text-white' : 'group-hover:text-white/80'} ${tab.highlight && activeTab !== tab.id ? 'text-purple-300/80' : ''}`}>{tab.label}</span>
-                <span className="text-[10px] opacity-40 font-medium tracking-tight uppercase">{tab.sub}</span>
+              <div className="space-y-1.5">
+                {section.items.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => onTabChange(tab.id as TabId)}
+                    className={`w-full group flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 relative ${
+                      activeTab === tab.id 
+                      ? 'bg-white/[0.06] text-white shadow-[0_4px_20px_rgba(0,0,0,0.4)]' 
+                      : 'text-[#666] hover:bg-white/[0.03] hover:text-white/80'
+                    }`}
+                  >
+                    <span className={`material-symbols-outlined text-[24px] transition-all duration-300 ${activeTab === tab.id ? 'scale-110 text-white' : 'group-hover:text-white/60'} ${tab.highlight && activeTab !== tab.id ? 'text-purple-500/50' : ''}`}>
+                      {tab.icon}
+                    </span>
+                    <div className="flex flex-col items-start text-left">
+                      <span className={`text-[13px] font-bold tracking-wide transition-colors ${activeTab === tab.id ? 'text-white' : 'group-hover:text-white/80'} ${tab.highlight && activeTab !== tab.id ? 'text-purple-300/80' : ''}`}>{tab.label}</span>
+                      <span className="text-[10px] opacity-40 font-medium tracking-tight uppercase">{tab.sub}</span>
+                    </div>
+                  </button>
+                ))}
               </div>
-            </button>
+            </div>
           ))}
         </nav>
 

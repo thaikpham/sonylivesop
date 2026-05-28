@@ -4,51 +4,50 @@ interface FAQItem {
   question: string;
   answer: string;
   explanation: string;
-  category: 'Video' | 'Audio' | 'Network' | 'Setup' | 'TikTok';
+  category: 'Camera' | 'Lens' | 'Audio' | 'Setup';
   icon: string;
   source?: string;
 }
 
 const FAQCard: React.FC<{ item: FAQItem; isOpen: boolean; onToggle: () => void }> = ({ item, isOpen, onToggle }) => (
-  <div className={`faq-gradient border rounded-2xl transition-all duration-300 overflow-hidden ${isOpen ? 'border-[#969696] ring-1 ring-[#969696]/20' : 'border-[#595959] hover:border-[#7a7a7a]'}`}>
+  <div className={`faq-gradient border rounded-2xl transition-all duration-300 overflow-hidden ${isOpen ? 'border-purple-500/40 ring-1 ring-purple-500/10' : 'border-white/5 hover:border-white/20'}`}>
     <button 
       onClick={onToggle}
       className="w-full text-left p-5 flex items-start gap-4 focus:outline-none"
     >
       <div className={`w-8 h-8 rounded-lg shrink-0 flex items-center justify-center ${
-        item.category === 'Video' ? 'bg-blue-500/10 text-blue-400' :
+        item.category === 'Camera' ? 'bg-blue-500/10 text-blue-400' :
         item.category === 'Audio' ? 'bg-orange-500/10 text-orange-400' :
-        item.category === 'Network' ? 'bg-green-500/10 text-green-400' :
-        item.category === 'TikTok' ? 'bg-[#ff0050]/10 text-[#ff0050]' : 'bg-purple-500/10 text-purple-400'
+        item.category === 'Lens' ? 'bg-yellow-500/10 text-yellow-400' : 'bg-purple-500/10 text-purple-400'
       }`}>
         <span className="material-symbols-outlined text-[20px]">{item.icon}</span>
       </div>
       <div className="flex-1">
         <div className="flex items-center justify-between gap-4">
-          <h4 className="font-bold text-white text-sm md:text-base leading-snug">{item.question}</h4>
-          <span className={`material-symbols-outlined text-[#969696] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>expand_more</span>
+          <h4 className="font-bold text-white text-xs md:text-sm leading-snug">{item.question}</h4>
+          <span className={`material-symbols-outlined text-white/30 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}>expand_more</span>
         </div>
-        <div className="mt-1 flex gap-2">
-          <span className="text-[9px] font-bold uppercase tracking-widest text-[#969696] bg-white/5 px-1.5 py-0.5 rounded">{item.category}</span>
-          <span className="text-[9px] font-bold uppercase tracking-widest text-blue-400/80 bg-blue-400/5 px-1.5 py-0.5 rounded">{item.source || 'Expert Insights'}</span>
+        <div className="mt-1.5 flex gap-2">
+          <span className="text-[8px] font-black uppercase tracking-widest text-white/40 bg-white/5 px-1.5 py-0.5 rounded">{item.category}</span>
+          <span className="text-[8px] font-black uppercase tracking-widest text-purple-400 bg-purple-500/10 px-1.5 py-0.5 rounded">{item.source || 'Sony Wiki'}</span>
         </div>
       </div>
     </button>
     
     {isOpen && (
       <div className="px-5 pb-6 animate-fade">
-        <div className="h-px bg-gradient-to-r from-[#595959] to-transparent mb-5"></div>
+        <div className="h-px bg-gradient-to-r from-white/5 to-transparent mb-5"></div>
         <div className="space-y-4">
-          <div className="bg-white/5 border-l-2 border-[#969696] p-4 rounded-r-xl">
-            <p className="text-white text-sm font-bold mb-2 flex items-center gap-2">
-              <span className="material-symbols-outlined text-[16px] text-green-400">lightbulb</span>
+          <div className="bg-white/[0.02] border-l-2 border-purple-500 p-4 rounded-r-xl">
+            <p className="text-white text-xs font-bold mb-2 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[14px] text-purple-400">lightbulb</span>
               Giải pháp thực chiến:
             </p>
-            <p className="text-sm text-[rgba(218,220,224,0.9)] leading-relaxed">{item.answer}</p>
+            <p className="text-xs text-white/80 leading-relaxed">{item.answer}</p>
           </div>
           <div className="px-1">
-            <p className="text-[10px] font-bold text-[#969696] uppercase tracking-wider mb-2">Vì sao lại thế?</p>
-            <p className="text-xs text-[rgba(218,220,224,0.6)] leading-relaxed italic">
+            <p className="text-[9px] font-bold text-white/30 uppercase tracking-wider mb-2">Giải thích kỹ thuật</p>
+            <p className="text-[10px] text-white/50 leading-relaxed italic">
               "{item.explanation}"
             </p>
           </div>
@@ -60,87 +59,80 @@ const FAQCard: React.FC<{ item: FAQItem; isOpen: boolean; onToggle: () => void }
 
 export const FAQSection: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
-  const [filter, setFilter] = useState<'All' | 'Video' | 'Audio' | 'Network' | 'Setup' | 'TikTok'>('All');
+  const [filter, setFilter] = useState<'All' | 'Camera' | 'Lens' | 'Audio' | 'Setup'>('All');
 
   const faqs: FAQItem[] = [
     {
-      category: 'TikTok',
-      icon: 'key',
-      question: 'Làm sao để tôi được cấp quyền sử dụng TikTok Live Studio?',
-      answer: 'Tài khoản cần có ít nhất 1,000 followers và đã livestream trong 7 ngày gần nhất.',
-      explanation: 'TikTok yêu cầu Creators phải có một lượng tương tác tối thiểu để mở khóa phần mềm Studio chuyên dụng. Nếu mất quyền, hãy livestream bằng điện thoại để kích hoạt lại.',
-      source: 'TikTok Help Center'
-    },
-    {
-      category: 'TikTok',
-      icon: 'screen_share',
-      question: 'Sự khác biệt giữa Portrait Mode và Landscape Mode trong TikTok Studio?',
-      answer: 'Portrait (Dọc) phù hợp với người xem trên mobile, Landscape (Ngang) phù hợp cho Game thủ hoặc muốn dùng Layout phức tạp.',
-      explanation: 'Sony ZV-E10 II quay dọc 9:16 cực tốt, giúp video của bạn chiếm trọn màn hình người xem, tăng tỷ lệ giữ chân khách hàng.',
-      source: 'TikTok Studio Guide'
+      category: 'Camera',
+      icon: 'videocam',
+      question: 'Tại sao dòng máy ảnh Cinema Line Sony FX30/FX3 lại tối ưu hơn dòng Alpha cho livestream liên tục?',
+      answer: 'Dòng Cinema Line sở hữu hệ thống quạt tản nhiệt chủ động tích hợp bên trong thân máy, cho phép livestream liên tục 24/7 ở độ phân giải cao mà không bao giờ gặp sự cố tự ngắt do quá nhiệt.',
+      explanation: 'Các máy ảnh Hybrid thông thường (như Alpha 7 IV) được thiết kế ưu tiên chống thời tiết và không có quạt tản nhiệt vật lý. Khi hoạt động liên tục ở môi trường nhiệt độ phòng lớn, cảm biến sẽ bị nóng dần lên và tự động tắt máy để bảo vệ phần cứng sau khoảng vài tiếng.',
+      source: 'Sony Cinema Guide'
     },
     {
       category: 'Setup',
-      icon: 'admin_panel_settings',
-      question: 'Tại sao OBS Project khuyên luôn nên chạy OBS bằng quyền Administrator?',
-      answer: 'Để Windows ưu tiên tài nguyên GPU cho OBS xử lý Rendering cảnh quay (Scenes) ngay cả khi máy đang chạy các tác vụ nặng khác.',
-      explanation: 'Khi chạy quyền Admin, Windows gán ưu tiên cao cho OBS trong bộ lập lịch GPU, giúp tránh hiện tượng "Lagged Frames" do GPU bị chiếm dụng hết bởi Game hoặc phần mềm khác.',
-      source: 'OBS Wiki Core'
+      icon: 'battery_charging_full',
+      question: 'Tại sao nhân viên Sony luôn khuyên dùng bộ cấp nguồn Pin ảo DC-C1 thay vì sạc trực tiếp qua cổng USB-C?',
+      answer: 'Sử dụng Pin ảo DC-C1 giúp loại bỏ pin Lithium vật lý ra khỏi máy ảnh, từ đó triệt tiêu nhiệt lượng sinh ra do quá trình sạc xả pin liên tục, giúp bo mạch luôn mát mẻ và bảo vệ tuổi thọ linh kiện.',
+      explanation: 'Cổng sạc Type-C của máy ảnh khi cắm sạc trực tiếp trong lúc hoạt động sẽ sinh nhiệt lượng kép (vừa chạy máy vừa sạc pin). Nhiệt độ này có thể đẩy nhanh quá trình kích hoạt bộ cảm biến tự ngắt nhiệt của máy ảnh.',
+      source: 'Sony Accessories'
     },
     {
-      category: 'Network',
-      icon: 'signal_cellular_alt',
-      question: 'Khi nào tôi nên bật tính năng "Dynamic Bitrate" trong OBS?',
-      answer: 'Khi bạn livestream qua mạng không ổn định (ví dụ 4G/5G hoặc Wi-Fi công cộng) để tránh bị rớt luồng hoàn toàn.',
-      explanation: 'Thay vì rớt khung hình (Dropped Frames) khi mạng yếu, OBS sẽ tự động giảm chất lượng hình ảnh xuống để duy trì kết nối mượt mà nhất có thể.',
-      source: 'OBS 24+ Features'
+      category: 'Camera',
+      icon: 'palette',
+      question: 'Hệ màu S-Cinetone mang lại lợi ích gì cho các livestreamer?',
+      answer: 'S-Cinetone giúp tái hiện tông màu da (Skin tone) tự nhiên, hồng hào và chuẩn điện ảnh ngay từ nguồn phát gốc mà không cần qua bất kỳ bộ lọc màu hay chỉnh màu (Color Grading) phức tạp nào trên phần mềm phát sóng.',
+      explanation: 'S-Cinetone kế thừa công nghệ màu sắc từ các máy quay điện ảnh CineAlta cao cấp của Sony, tập trung tối ưu hóa vùng trung sắc (Mid-tones) của màu da người châu Á, giúp hình ảnh trông sang trọng và chân thực.',
+      source: 'Sony Color Science'
     },
     {
-      category: 'Video',
-      icon: 'format_color_fill',
-      question: 'Tôi nên chọn Color Range là "Limited" hay "Full" trong OBS?',
-      answer: 'Nên chọn "Limited" cho hầu hết các nền tảng livestream hiện nay (YouTube, Facebook, TikTok).',
-      explanation: 'Chuẩn truyền hình và web đa số dùng dải Limited (16-235). Nếu chọn Full (0-255), hình ảnh của bạn thường sẽ bị bệt đen (crushed blacks) khi người xem xem trên trình duyệt.',
-      source: 'OBS Video Guide'
-    },
-    {
-      category: 'TikTok',
-      icon: 'ads_click',
-      question: 'Làm thế nào để gắn link sản phẩm (Product Link) ngay trong TikTok Live Studio?',
-      answer: 'Bạn cần liên kết tài khoản với TikTok Shop và sử dụng widget "Shopping" trong phần Add Source.',
-      explanation: 'Việc gắn link trực tiếp giúp khách hàng chốt đơn ngay khi bạn đang giới thiệu bằng tính năng Product Showcase của Sony.',
-      source: 'TikTok Shop Integration'
+      category: 'Lens',
+      icon: 'lens',
+      question: 'Khi nào nhân viên nên tư vấn ống kính zoom Sony FE 18-105mm F4 G OSS cho khách hàng?',
+      answer: 'Ống kính này lý tưởng cho nhu cầu livestream đa dụng (đặc biệt là quần áo, thời trang). Thiết kế zoom điện tử (Power Zoom) cho phép nhân viên điều khiển chuyển đổi góc toàn sang góc cận zoom chất liệu vải cực kỳ mượt mà từ xa.',
+      explanation: 'Đặc thù của dòng Power Zoom là hệ thấu kính chuyển động tịnh tiến bên trong thân ống kính (internal zoom), giúp tiêu cự không bị thay đổi vật lý ra bên ngoài và giữ nguyên cân bằng của chân máy/gimbal.',
+      source: 'Sony G Lenses'
     },
     {
       category: 'Audio',
+      icon: 'mic',
+      question: 'Sự khác biệt giữa Micro Sony ECM-W3S và Micro Condenser C-80 trong không gian livestream?',
+      answer: 'Mic không dây ECM-W3S phù hợp cho host cần di chuyển liên tục, tương tác sản phẩm. Mic phòng thu C-80 phù hợp cho các buổi talkshow tĩnh, review mỹ phẩm hoặc live âm thanh chất lượng cao cần giọng nói ấm áp.',
+      explanation: 'Sony C-80 sở hữu màng thu lớn (large diaphragm) hướng thu Cardio cực kỳ nhạy, thu trọn giọng nói ấm, dầy và loại bỏ tạp âm nền cực tốt nhưng yêu cầu host ngồi cố định trước mic.',
+      source: 'Sony Audio Division'
+    },
+    {
+      category: 'Setup',
       icon: 'tune',
-      question: 'Giọng của Host lúc nói to bị rè, lúc nói nhỏ lại không nghe thấy. Làm sao để ổn định?',
-      answer: 'Hãy thêm Filter "Compressor" (Bộ nén) vào Micro trong OBS/TikTok Studio.',
-      explanation: 'Compressor giúp kéo các âm thanh quá to xuống và nâng các âm thanh nhỏ lên mức cân bằng, rất quan trọng khi chốt đơn.'
+      question: 'Làm thế nào để xử lý triệt để hiện tượng vỡ tiếng (clipping) khi người nói đột ngột nói to?',
+      answer: 'Sử dụng chức năng Compressor (Bộ nén) trên phần mềm OBS hoặc kích hoạt Clipguard trên soundcard Wave XLR để tự động giới hạn và giảm cường độ âm thanh khi vượt ngưỡng.',
+      explanation: 'Compressor tự động giảm tỷ lệ âm thanh (vd 4:1) khi vượt qua ngưỡng ngưỡng Threshold đặt sẵn, ngăn chặn hiện tượng méo tín hiệu số (digital clipping) gây chói tai cho người nghe.',
+      source: 'Audio Engineering'
     }
   ];
 
   const filteredFaqs = filter === 'All' ? faqs : faqs.filter(f => f.category === filter);
 
   return (
-    <div className="space-y-8 animate-fade pb-20">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="flex flex-col gap-2">
+    <div className="space-y-8 animate-fade pb-20 w-full">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-white/[0.06] pb-8">
+        <div className="flex flex-col gap-1">
           <h2 className="text-3xl font-bold text-white flex items-center gap-3">
-            <span className="material-symbols-outlined text-[#969696] text-3xl">lightbulb</span>
-            Góc Chuyên Gia (FAQ)
+            <span className="material-symbols-outlined text-purple-400 text-3xl">lightbulb</span>
+            Cơ Sở Tri Thức Kỹ Thuật (FAQ)
           </h2>
-          <p className="text-[rgba(218,220,224,0.6)] text-sm max-w-xl">
-            Tổng hợp các kỹ thuật livestream thực chiến từ cộng đồng Reddit và tài liệu chuyên sâu của TikTok Live Studio.
+          <p className="text-white/40 text-sm max-w-xl">
+            Tổng hợp các tri thức kỹ thuật thực chiến chuyên sâu của Sony để hỗ trợ nhân viên tư vấn và cấu hình tối ưu.
           </p>
         </div>
 
-        <div className="flex bg-[#1a1a1a] border border-[#595959] rounded-xl p-1 gap-1 shrink-0 overflow-x-auto dark-scrollbar">
-          {(['All', 'Video', 'Audio', 'Network', 'Setup', 'TikTok'] as const).map((cat) => (
+        <div className="flex bg-[#121212] border border-white/5 rounded-xl p-1 gap-1 shrink-0 overflow-x-auto dark-scrollbar">
+          {(['All', 'Camera', 'Lens', 'Audio', 'Setup'] as const).map((cat) => (
             <button 
               key={cat}
               onClick={() => { setFilter(cat); setOpenIndex(null); }}
-              className={`px-3 py-1 rounded-lg text-[11px] font-bold transition-all whitespace-nowrap ${filter === cat ? 'bg-[#969696] text-black' : 'text-[#969696] hover:text-white'}`}
+              className={`px-4 py-1.5 rounded-lg text-[10px] font-bold transition-all whitespace-nowrap ${filter === cat ? 'bg-white text-black shadow-md' : 'text-[#666] hover:text-white'}`}
             >
               {cat === 'All' ? 'Tất cả' : cat}
             </button>
