@@ -93,19 +93,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           ))}
         </nav>
 
-        <div className="p-6 space-y-4">
-          <div className="bg-gradient-to-br from-white/[0.04] to-transparent rounded-[24px] p-5 border border-white/[0.04] backdrop-blur-md">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em]">Live Support</span>
-              <div className="px-2 py-0.5 bg-green-500/10 rounded-full">
-                <span className="text-[9px] font-bold text-green-500 uppercase">Online</span>
-              </div>
-            </div>
-            <p className="text-[11px] text-white/40 leading-relaxed font-medium">
-              Sony Live SOP Master Console — Phiên bản Local Development.
-            </p>
-          </div>
-        </div>
       </div>
 
       {/* Main Content Area */}
