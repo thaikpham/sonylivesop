@@ -8,9 +8,10 @@ import { TroubleshootingSection } from './components/TroubleshootingSection';
 import { FAQSection } from './components/FAQSection';
 import { ContentAISystem } from './components/ContentAISystem';
 import { SmartPricingSystem } from './components/SmartPricingSystem';
+import { ProductAdvisor } from './components/ProductAdvisor';
 import { LivestreamShowcasePage } from './pages/LivestreamShowcasePage';
 
-export type TabId = 'gear' | 'lighting' | 'software' | 'checklist' | 'trouble' | 'showcase' | 'faq' | 'content_ai' | 'pricing';
+export type TabId = 'gear' | 'lighting' | 'software' | 'checklist' | 'trouble' | 'showcase' | 'faq' | 'content_ai' | 'pricing' | 'advisor';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<TabId>('gear');
@@ -30,6 +31,7 @@ export default function App() {
             {activeTab === 'faq' && <FAQSection />}
             {activeTab === 'content_ai' && <ContentAISystem />}
             {activeTab === 'pricing' && <SmartPricingSystem />}
+            {activeTab === 'advisor' && <ProductAdvisor />}
           </div>
         </div>
       )}

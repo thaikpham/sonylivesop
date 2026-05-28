@@ -13,6 +13,7 @@ export const Layout: React.FC<LayoutProps> = ({ children, activeTab, onTabChange
     { id: 'lighting', label: 'Nghệ Thuật Ánh Sáng', icon: 'flare', sub: '3-Point & Mood' },
     { id: 'software', label: 'Trung Tâm Điều Hành', icon: 'terminal', sub: 'OBS & Audio' },
     { id: 'content_ai', label: 'Sáng Tạo Nội Dung AI', icon: 'psychology_alt', sub: 'Gemini Scripting', highlight: true },
+    { id: 'advisor', label: 'Trợ Lý Tư Vấn AI', icon: 'assistant', sub: 'Gemini Advisor', highlight: true },
     { id: 'pricing', label: 'Báo Giá Thông Minh', icon: 'receipt_long', sub: 'Smart Invoice & PDF', highlight: true },
     { id: 'checklist', label: 'Quy Trình Vận Hành', icon: 'assignment_turned_in', sub: 'Standard Checklist' },
     { id: 'trouble', label: 'Trung Tâm Giải Nguy', icon: 'build', sub: 'Fix it fast' },
