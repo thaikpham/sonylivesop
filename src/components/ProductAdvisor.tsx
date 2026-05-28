@@ -408,13 +408,24 @@ Trong chế độ Demo, tôi có thể trả lời tốt các chủ đề về:
           </div>
         </div>
 
-        <button
-          onClick={() => setShowSettings(true)}
-          className="p-2 hover:bg-white/5 rounded-xl transition-all text-gray-400 hover:text-white flex items-center gap-1 text-xs font-semibold border border-white/5 bg-white/[0.02]"
-        >
-          <span className="material-symbols-outlined text-[18px]">settings</span>
-          Cài đặt AI
-        </button>
+        <div className="flex items-center gap-3">
+          <a
+            href="https://drive.google.com/drive/project/1TRo0XIKx39IaW_RxVqTwsG_6dZGsv8uj?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-4 py-2 bg-purple-600/10 hover:bg-purple-600/20 text-purple-400 hover:text-purple-300 border border-purple-500/20 hover:border-purple-500/40 rounded-xl transition-all flex items-center gap-1.5 text-xs font-bold shadow-md shadow-purple-500/5 active:scale-95"
+          >
+            <span className="material-symbols-outlined text-[18px]">folder_open</span>
+            Tài liệu của Sony Trainers
+          </a>
+          <button
+            onClick={() => setShowSettings(true)}
+            className="p-2 hover:bg-white/5 rounded-xl transition-all text-gray-400 hover:text-white flex items-center gap-1 text-xs font-semibold border border-white/5 bg-white/[0.02]"
+          >
+            <span className="material-symbols-outlined text-[18px]">settings</span>
+            Cài đặt AI
+          </button>
+        </div>
       </div>
 
       {/* Main Layout: Conversation area + quick suggestions */}
