@@ -5,6 +5,7 @@ interface Message {
   role: 'user' | 'model';
   text: string;
   timestamp: Date;
+  groundingMetadata?: any;
 }
 
 const DEFAULT_SYSTEM_INSTRUCTION = `Bạn là một chuyên gia tư vấn thiết bị Sony Pro Studio chuyên nghiệp, am hiểu sâu sắc về máy ảnh Sony Alpha, dòng Cinema Line (FX3, FX30), các loại ống kính (G Master, G Lens) và các giải pháp vận hành Livestream chuyên nghiệp.
@@ -35,7 +36,8 @@ HÃY TUÂN THỦ CÁC QUY TẮC SAU KHI PHẢN HỒI:
 - Trả lời bằng Tiếng Việt rõ ràng. Sử dụng Markdown (in đậm, danh sách gạch đầu dòng, bảng so sánh) để câu trả lời dễ đọc.
 - Khi người dùng hỏi tư vấn combo livestream, hãy đề xuất combo dựa trên: Lĩnh vực kinh doanh (Thời trang, F&B, Review), Ngân sách, và Số lượng góc máy.
 - Đưa ra những phân tích cụ thể vì sao họ nên chọn thiết bị đó (Ví dụ: livestream quần áo nên chọn FX30 vì có màu da S-Cinetone đẹp và có quạt làm mát hoạt động cả ngày không bị ngắt).
-- Nếu câu hỏi không liên quan đến thiết bị Sony hoặc livestream, hãy lịch sự nhắc nhở họ rằng bạn là trợ lý chuyên biệt của Sony Pro Studio.`;
+- Nếu câu hỏi không liên quan đến thiết bị Sony hoặc livestream, hãy lịch sự nhắc nhở họ rằng bạn là trợ lý chuyên biệt của Sony Pro Studio.
+- Khi được hỏi về các thông số kỹ thuật mới nhất, các sản phẩm mới ra mắt hoặc giá cả hiện hành, hãy chủ động sử dụng công cụ Tìm kiếm Google để truy cập trang web chính thức của Sony Việt Nam (sony.com.vn) hoặc Sony Alpha Vietnam để lấy thông tin, cào dữ liệu chính xác và đầy đủ nhất nhằm cung cấp cho khách hàng.`;
 
 const SUGGESTIONS = [
   { text: 'Tư vấn combo live bán quần áo', icon: 'apparel' },
@@ -74,6 +76,10 @@ export const ProductAdvisor: React.FC = () => {
   const [systemInstruction, setSystemInstruction] = useState(() => {
     return localStorage.getItem('gemini_system_instruction') || DEFAULT_SYSTEM_INSTRUCTION;
   });
+  const [useSearch, setUseSearch] = useState(() => {
+    const saved = localStorage.getItem('gemini_use_search');
+    return saved === null ? true : saved === 'true';
+  });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -104,6 +110,7 @@ export const ProductAdvisor: React.FC = () => {
     localStorage.setItem('gemini_api_key', apiKey);
     localStorage.setItem('gemini_model', selectedModel);
     localStorage.setItem('gemini_system_instruction', systemInstruction);
+    localStorage.setItem('gemini_use_search', String(useSearch));
     setShowSettings(false);
   };
 
@@ -128,17 +135,27 @@ export const ProductAdvisor: React.FC = () => {
           parts: [{ text: msg.text }]
         }));
 
+        const requestBody: any = {
+          contents: conversationHistory,
+          systemInstruction: {
+            parts: [{ text: systemInstruction }]
+          }
+        };
+
+        if (useSearch) {
+          requestBody.tools = [
+            {
+              google_search: {}
+            }
+          ];
+        }
+
         const response = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${apiKey}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: conversationHistory,
-              systemInstruction: {
-                parts: [{ text: systemInstruction }]
-              }
-            })
+            body: JSON.stringify(requestBody)
           }
         );
 
@@ -155,13 +172,15 @@ export const ProductAdvisor: React.FC = () => {
 
         const data = await response.json();
         const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Không nhận được câu trả lời từ AI.';
+        const groundingMetadata = data.candidates?.[0]?.groundingMetadata;
         
         setMessages(prev => [
           ...prev,
           {
             role: 'model',
             text: responseText,
-            timestamp: new Date()
+            timestamp: new Date(),
+            groundingMetadata
           }
         ]);
       } catch (err: any) {
@@ -478,9 +497,35 @@ Trong chế độ Demo, tôi có thể trả lời tốt các chủ đề về:
                           {isUser ? <p className="text-xs leading-relaxed">{msg.text}</p> : renderMarkdown(msg.text)}
                         </div>
                       </div>
+
+                      {/* Grounding Citations */}
+                      {!isUser && msg.groundingMetadata?.groundingChunks?.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-2 px-1">
+                          <span className="text-[9px] text-white/40 flex items-center gap-1 w-full">
+                            <span className="material-symbols-outlined text-[12px]">link</span>
+                            Nguồn tham khảo:
+                          </span>
+                          {msg.groundingMetadata.groundingChunks.map((chunk: any, chunkIdx: number) => {
+                            if (chunk?.web?.uri) {
+                              return (
+                                <a
+                                  key={chunkIdx}
+                                  href={chunk.web.uri}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/[0.03] border border-white/5 text-[9px] text-purple-400 hover:text-purple-300 hover:bg-white/[0.06] transition-all"
+                                >
+                                  <span className="truncate max-w-[150px]">{chunk.web.title || chunk.web.uri}</span>
+                                </a>
+                              );
+                            }
+                            return null;
+                          })}
+                        </div>
+                      )}
                       
                       {/* Timestamp */}
-                      <p className={`text-[8px] text-white/20 px-1 ${isUser ? 'text-right' : 'text-left'}`}>
+                      <p className={`text-[8px] text-white/20 px-1 mt-1 ${isUser ? 'text-right' : 'text-left'}`}>
                         {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
@@ -594,6 +639,23 @@ Trong chế độ Demo, tôi có thể trả lời tốt các chủ đề về:
                   <option value="gemini-2.5-pro">Gemini 2.5 Pro (Thông minh & Chuyên sâu)</option>
                   <option value="gemini-2.0-flash">Gemini 2.0 Flash (Tốc độ cao)</option>
                 </select>
+              </div>
+
+              <div className="flex items-center justify-between p-3.5 rounded-xl bg-[#181818] border border-white/5">
+                <div className="space-y-0.5">
+                  <label className="text-xs font-bold text-white flex items-center gap-1.5 cursor-pointer" htmlFor="toggle-search">
+                    <span className="material-symbols-outlined text-[16px] text-purple-400">travel_explore</span>
+                    Tìm kiếm Google thời gian thực
+                  </label>
+                  <p className="text-[9px] text-white/40">Cho phép AI tìm thông tin trực tiếp từ website Sony Alpha Vietnam</p>
+                </div>
+                <input
+                  type="checkbox"
+                  id="toggle-search"
+                  checked={useSearch}
+                  onChange={(e) => setUseSearch(e.target.checked)}
+                  className="w-4 h-4 rounded border-white/10 bg-[#181818] text-purple-600 focus:ring-purple-500 cursor-pointer"
+                />
               </div>
 
               <div className="space-y-1">

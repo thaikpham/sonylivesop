@@ -33,11 +33,16 @@ export const ContentAISystem: React.FC = () => {
     return savedModel;
   });
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [useSearch, setUseSearch] = useState(() => {
+    const saved = localStorage.getItem('gemini_use_search');
+    return saved === null ? true : saved === 'true';
+  });
 
   // Sync settings and migrate on mount
   useEffect(() => {
     const savedKey = localStorage.getItem('gemini_api_key') || GEMINI_API_KEY;
     let savedModel = localStorage.getItem('gemini_model') || DEFAULT_MODEL;
+    const savedSearch = localStorage.getItem('gemini_use_search');
     let migrated = false;
     if (savedModel === 'gemini-1.5-flash') {
       savedModel = 'gemini-2.5-flash';
@@ -51,6 +56,7 @@ export const ContentAISystem: React.FC = () => {
     }
     setApiKey(savedKey);
     setSelectedModel(savedModel);
+    setUseSearch(savedSearch === null ? true : savedSearch === 'true');
   }, []);
 
   const handleGenerate = async () => {
@@ -100,17 +106,27 @@ Yêu cầu xuất ra cấu hình JSON hợp lệ chứa 3 trường dữ liệu 
   "script": "Kịch bản chi tiết chia thành các phần cụ thể: [MỞ ĐẦU - 30 giây], [ĐIỂM NHẤN 1 - Tính năng chính], [ĐIỂM NHẤN 2 - Trải nghiệm thực tế], [KÊU GỌI HÀNH ĐỘNG - Chốt đơn]"
 }`;
 
+      const requestBody: any = {
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: "application/json"
+        }
+      };
+
+      if (useSearch) {
+        requestBody.tools = [
+          {
+            google_search: {}
+          }
+        ];
+      }
+
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/${activeModel}:generateContent?key=${activeKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: {
-              responseMimeType: "application/json"
-            }
-          })
+          body: JSON.stringify(requestBody)
         }
       );
 
