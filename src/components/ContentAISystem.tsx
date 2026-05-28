@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { GEMINI_API_KEY, DEFAULT_MODEL } from '../config';
 
 const SonyCategories = [
   { id: 'vlog', label: 'Vlogging Cameras', examples: 'ZV-1 II, ZV-E10 II, ZV-1F' },
@@ -24,22 +25,66 @@ export const ContentAISystem: React.FC = () => {
     setLoading(true);
     setResult(null);
     
+    const categoryLabel = SonyCategories.find(c => c.id === category)?.label || '';
+    const purposeLabel = purpose === 'sales' ? 'Chốt đơn bán hàng' : purpose === 'review' ? 'Đánh giá/Review sản phẩm' : 'Hướng dẫn sử dụng/Kỹ thuật';
+    const toneLabel = tone === 'professional' ? 'Chuyên gia thuyết phục' : tone === 'energetic' ? 'Năng động, cuốn hút' : 'Thân thiện, gần gũi';
+
     try {
-      // Simulate AI generation for local development
-      // In production, replace this with your actual AI API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const prompt = `Bạn là trợ lý AI sáng tạo kịch bản cho Sony Việt Nam. 
+Hãy tạo Tiêu đề, Caption mạng xã hội và Kịch bản livestream chi tiết cho sản phẩm sau:
+- Tên sản phẩm: "${productName}"
+- Phân loại danh mục: "${categoryLabel}"
+- Mục đích buổi livestream: "${purposeLabel}"
+- Tông giọng trình bày: "${toneLabel}"
+
+Yêu cầu xuất ra cấu hình JSON hợp lệ chứa 3 trường dữ liệu sau (và KHÔNG bao gồm bất cứ phần văn bản giải thích nào khác ngoài JSON, không bao gồm ký tự \`\`\`json ở đầu hay cuối):
+{
+  "title": "Tiêu đề livestream thu hút ngắn gọn kèm biểu tượng cảm xúc",
+  "caption": "Mô tả chi tiết đăng mạng xã hội, có gạch đầu dòng các điểm nổi bật và các hashtag phù hợp như #Sony #Livestream #ContentCreator",
+  "script": "Kịch bản chi tiết chia thành các phần cụ thể: [MỞ ĐẦU - 30 giây], [ĐIỂM NHẤN 1 - Tính năng chính], [ĐIỂM NHẤN 2 - Trải nghiệm thực tế], [KÊU GỌI HÀNH ĐỘNG - Chốt đơn]"
+}`;
+
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${DEFAULT_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: {
+              responseMimeType: "application/json"
+            }
+          })
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const textResult = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
       
-      const categoryLabel = SonyCategories.find(c => c.id === category)?.label || '';
-      const purposeLabel = purpose === 'sales' ? 'Chốt đơn' : purpose === 'review' ? 'Review' : 'Hướng dẫn';
-      
+      const cleanJson = textResult.replace(/```json/g, '').replace(/```/g, '').trim();
+      const parsed = JSON.parse(cleanJson);
+
       setResult({
-        title: `🔥 ${productName} — ${purposeLabel} Livestream Đỉnh Cao!`,
-        caption: `✨ ${productName} từ ${categoryLabel} — Giải pháp hoàn hảo cho Livestream chuyên nghiệp!\n\n🎯 Tính năng Eye-AF siêu nhạy, Product Showcase mượt mà\n📸 Skin tone tự nhiên, xóa phông đỉnh cao\n\n💥 Đặt hàng ngay hôm nay!\n\n#Sony #${productName.replace(/\s+/g, '')} #Livestream #ContentCreator #SonyVietnam`,
-        script: `[MỞ ĐẦU - 30 giây]\n"Xin chào các bạn! Hôm nay mình sẽ giới thiệu đến các bạn ${productName} — một sản phẩm ${categoryLabel} tuyệt vời từ Sony!"\n\n[ĐIỂM NHẤN 1 - Thiết kế & Chất lượng]\n"${productName} sở hữu thiết kế nhỏ gọn nhưng cực kỳ chắc chắn. Chất lượng build rất premium, xứng đáng với thương hiệu Sony."\n\n[ĐIỂM NHẤN 2 - Tính năng AI]\n"Điểm mình thích nhất là tính năng Eye-AF — lấy nét vào mắt cực kỳ nhạy. Kết hợp với Product Showcase, bạn có thể chuyển nét mượt mà từ mặt sang sản phẩm."\n\n[ĐIỂM NHẤN 3 - Skin Tone]\n"Màu da Sony không ai đánh bại được — tự nhiên, hồng hào, không cần filter."\n\n[KÊU GỌI HÀNH ĐỘNG]\n"Đừng bỏ lỡ cơ hội sở hữu ${productName} với giá ưu đãi đặc biệt chỉ có trong buổi Live hôm nay! Comment '1' để mình gửi link nhé!"`
+        title: parsed.title || `🔥 ${productName} — ${purposeLabel} Livestream Đỉnh Cao!`,
+        caption: parsed.caption || `✨ ${productName} từ ${categoryLabel} — Giải pháp hoàn hảo cho Livestream chuyên nghiệp!`,
+        script: parsed.script || `[MỞ ĐẦU - 30 giây]\n"Xin chào các bạn! Hôm nay mình sẽ giới thiệu đến các bạn ${productName}..."`
       });
+
     } catch (error) {
-      console.error("AI Generation failed:", error);
-      alert("Không thể tạo nội dung lúc này. Vui lòng thử lại.");
+      console.error("AI Generation failed, falling back to local generator:", error);
+      const fallbackTitle = `🔥 ${productName} — ${purposeLabel} Livestream Đỉnh Cao!`;
+      const fallbackCaption = `✨ ${productName} từ ${categoryLabel} — Giải pháp hoàn hảo cho Livestream chuyên nghiệp!\n\n🎯 Tính năng lấy nét tự động, màu sắc da tự nhiên và tối ưu hóa âm thanh vượt trội.\n📸 Chất lượng hình ảnh chuyên nghiệp giúp thu hút người xem hơn.\n\n💥 Đặt hàng ngay hôm nay để nhận ưu đãi đặc biệt từ Sony Pro Studio!\n\n#Sony #${productName.replace(/\s+/g, '')} #Livestream #ContentCreator #SonyVietnam`;
+      const fallbackScript = `[MỞ ĐẦU - 30 giây]\n"Xin chào các bạn! Hôm nay mình sẽ giới thiệu đến các bạn ${productName} — một sản phẩm ${categoryLabel} tuyệt vời từ Sony!"\n\n[ĐIỂM NHẤN 1 - Thiết kế & Chất lượng]\n"${productName} sở hữu thiết kế nhỏ gọn nhưng cực kỳ chắc chắn. Chất lượng build rất premium, xứng đáng với thương hiệu Sony."\n\n[ĐIỂM NHẤN 2 - Tính năng AI]\n"Điểm mình thích nhất là tính năng Eye-AF — lấy nét vào mắt cực kỳ nhạy. Kết hợp với Product Showcase, bạn có thể chuyển nét mượt mà từ mặt sang sản phẩm."\n\n[ĐIỂM NHẤN 3 - Trải nghiệm thực tế]\n"Màu da Sony cực đẹp tự nhiên, hồng hào và sắc nét từng chi tiết."\n\n[KÊU GỌI HÀNH ĐỘNG]\n"Đừng bỏ lỡ cơ hội sở hữu ${productName} với giá ưu đãi đặc biệt chỉ có trong buổi Live hôm nay! Comment ngay để được tư vấn nhé!"`;
+
+      setResult({
+        title: fallbackTitle,
+        caption: fallbackCaption,
+        script: fallbackScript
+      });
     } finally {
       setLoading(false);
     }
@@ -56,7 +101,7 @@ export const ContentAISystem: React.FC = () => {
       <div className="flex flex-col gap-2">
         <h2 className="text-3xl font-bold shimmer-text">AI Content Generator</h2>
         <p className="text-white/50 text-sm max-w-xl">
-          Tự động hóa kịch bản livestream và caption chuẩn Sony. <span className="text-yellow-400/60 text-xs">(Chế độ Demo — Kết nối API AI để có nội dung thông minh hơn)</span>
+          Tự động hóa kịch bản livestream và caption chuẩn Sony. <span className="text-green-400/60 text-xs font-semibold">(Đang kết nối qua API Key Gemini của bạn)</span>
         </p>
       </div>
 

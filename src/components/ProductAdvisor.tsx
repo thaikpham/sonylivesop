@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { GEMINI_API_KEY, DEFAULT_MODEL } from '../config';
 
 interface Message {
   role: 'user' | 'model';
@@ -66,8 +67,8 @@ export const ProductAdvisor: React.FC = () => {
 
   // Load settings on mount
   useEffect(() => {
-    const savedKey = localStorage.getItem('gemini_api_key') || '';
-    const savedModel = localStorage.getItem('gemini_model') || 'gemini-1.5-flash';
+    const savedKey = localStorage.getItem('gemini_api_key') || GEMINI_API_KEY;
+    const savedModel = localStorage.getItem('gemini_model') || DEFAULT_MODEL;
     const savedInstruction = localStorage.getItem('gemini_system_instruction') || DEFAULT_SYSTEM_INSTRUCTION;
 
     setApiKey(savedKey);
