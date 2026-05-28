@@ -68,7 +68,10 @@ export const ProductAdvisor: React.FC = () => {
   // Load settings on mount
   useEffect(() => {
     const savedKey = localStorage.getItem('gemini_api_key') || GEMINI_API_KEY;
-    const savedModel = localStorage.getItem('gemini_model') || DEFAULT_MODEL;
+    let savedModel = localStorage.getItem('gemini_model') || DEFAULT_MODEL;
+    if (savedModel === 'gemini-1.5-flash') {
+      savedModel = DEFAULT_MODEL;
+    }
     const savedInstruction = localStorage.getItem('gemini_system_instruction') || DEFAULT_SYSTEM_INSTRUCTION;
 
     setApiKey(savedKey);
@@ -565,9 +568,9 @@ Trong chế độ Demo, tôi có thể trả lời tốt các chủ đề về:
                   onChange={(e) => setSelectedModel(e.target.value)}
                   className="w-full bg-[#181818] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none appearance-none cursor-pointer"
                 >
-                  <option value="gemini-1.5-flash">Gemini 1.5 Flash (Nhanh & Tối ưu)</option>
-                  <option value="gemini-1.5-pro">Gemini 1.5 Pro (Cực kỳ thông minh, chuyên sâu)</option>
-                  <option value="gemini-2.0-flash">Gemini 2.0 Flash (Phiên bản mới nhất)</option>
+                  <option value="gemini-2.5-flash">Gemini 2.5 Flash (Nhanh & Tối ưu - Mặc định)</option>
+                  <option value="gemini-2.5-pro">Gemini 2.5 Pro (Thông minh & Chuyên sâu)</option>
+                  <option value="gemini-2.0-flash">Gemini 2.0 Flash (Tốc độ cao)</option>
                 </select>
               </div>
 
