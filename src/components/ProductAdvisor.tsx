@@ -61,7 +61,7 @@ export const ProductAdvisor: React.FC = () => {
   const [showSettings, setShowSettings] = useState(false);
 
   // Settings State
-  const [apiKey, setApiKey] = useState(() => {
+  const [apiKey] = useState(() => {
     return localStorage.getItem('gemini_api_key') || GEMINI_API_KEY;
   });
   const [selectedModel, setSelectedModel] = useState(() => {
@@ -212,7 +212,7 @@ export const ProductAdvisor: React.FC = () => {
 
 *Mẹo: Bạn có thể chuyển sang tab **Báo Giá Thông Minh** để xem chi tiết đơn giá của từng thiết bị này.*
 
-*(Lưu ý: Đây là câu trả lời tự động ở chế độ Demo. Vui lòng vào Cài đặt để nhập **Gemini API Key** để trò chuyện trực tiếp thông minh hơn).*`;
+*(Lưu ý: Đây là câu trả lời tự động ở chế độ Demo Offline của Sony Pro Studio).*`;
         } else if (lowercaseInput.includes('fx30') && (lowercaseInput.includes('a7 iv') || lowercaseInput.includes('alpha 7'))) {
           reply = `So sánh giữa **Sony FX30** và **Sony Alpha 7 IV (A7M4)** cho nhu cầu livestream chuyên nghiệp:
 
@@ -228,7 +228,7 @@ export const ProductAdvisor: React.FC = () => {
 - Nên chọn **FX30** nếu mục tiêu chính là livestream liên tục thời gian dài (bán hàng, sự kiện), cần độ tin cậy tuyệt đối về nhiệt độ và muốn tiết kiệm chi phí ống kính.
 - Nên chọn **Alpha 7 IV** nếu bạn muốn kết hợp chụp ảnh chuyên nghiệp chất lượng cao (33MP) và livestream ở môi trường thiếu sáng, cần hiệu ứng xóa phông mượt mà của cảm biến Full Frame.
 
-*(Lưu ý: Đây là câu trả lời tự động ở chế độ Demo. Vui lòng vào Cài đặt để nhập **Gemini API Key** để trò chuyện trực tiếp thông minh hơn).*`;
+*(Lưu ý: Đây là câu trả lời tự động ở chế độ Demo Offline của Sony Pro Studio).*`;
         } else if (lowercaseInput.includes('1 góc') || lowercaseInput.includes('tiết kiệm') || lowercaseInput.includes('rẻ nhất')) {
           reply = `Nếu bạn đang tìm kiếm giải pháp livestream 1 góc máy đơn giản, cơ động và tiết kiệm nhất, **Combo 1: Sony ZV-E10 II Lite** là sự lựa chọn hoàn hảo:
 
@@ -236,7 +236,7 @@ export const ProductAdvisor: React.FC = () => {
 - **Giá tham khảo cả combo:** Khoảng ~76.000.000đ (Đã bao gồm Laptop gaming ASUS, Capture card Elgato Camlink 4K, tripod video Benro, Pin ảo DC-C1 cấp nguồn cả ngày và L-Plate để quay dọc màn hình điện thoại).
 - **Phù hợp với:** Các vloggers cá nhân làm review, talkshow nhỏ, hoặc các chủ shop tự livestream một mình tại nhà.
 
-*(Lưu ý: Đây là câu trả lời tự động ở chế độ Demo. Vui lòng vào Cài đặt để nhập **Gemini API Key** để trò chuyện trực tiếp thông minh hơn).*`;
+*(Lưu ý: Đây là câu trả lời tự động ở chế độ Demo Offline của Sony Pro Studio).*`;
         } else if (lowercaseInput.includes('âm thanh') || lowercaseInput.includes('mic') || lowercaseInput.includes('vang')) {
           reply = `Giải pháp xử lý âm thanh livestream từ chuyên gia Sony Pro Studio:
 
@@ -248,16 +248,11 @@ export const ProductAdvisor: React.FC = () => {
    - **Micro Shotgun Sony ECM-B1M:** Gắn trực tiếp lên hotshoe máy ảnh, lọc âm hướng định hướng phía trước cực tốt mà không cần dây nhợ rườm rà.
    - **Micro Condenser Sony C-80 (Studio):** Chất lượng âm thanh ấm áp, dày dặn chuyên nghiệp. Thích hợp cho phòng live ASMR hoặc talkshow tĩnh ít di chuyển.
 
-*(Lưu ý: Đây là câu trả lời tự động ở chế độ Demo. Vui lòng vào Cài đặt để nhập **Gemini API Key** để trò chuyện trực tiếp thông minh hơn).*`;
+*(Lưu ý: Đây là câu trả lời tự động ở chế độ Demo Offline của Sony Pro Studio).*`;
         } else {
           reply = `Chào bạn! Tôi là Trợ lý AI của Sony Pro Studio.
           
-Hiện tại tôi đang hoạt động ở **Chế độ Demo (Offline)** vì chưa có khóa API Key được thiết lập. 
-
-Để trò chuyện linh hoạt, thông minh và nhận được các tư vấn thiết bị Sony chi tiết theo thời gian thực cho trường hợp của bạn, bạn có thể:
-1. Nhấp vào **biểu tượng Bánh răng Cài đặt** ở góc trên bên phải.
-2. Dán mã **Gemini API Key** của bạn (lấy miễn phí từ Google AI Studio).
-3. Nhấp **Lưu thiết lập**.
+Hiện tại tôi đang hoạt động ở **Chế độ Demo (Offline)**. 
 
 Trong chế độ Demo, tôi có thể trả lời tốt các chủ đề về:
 - *Cấu hình livestream bán hàng quần áo / thời trang.*
@@ -606,27 +601,7 @@ Trong chế độ Demo, tôi có thể trả lời tốt các chủ đề về:
             </div>
 
             <form onSubmit={handleSaveSettings} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider pl-1">Gemini API Key</label>
-                <input
-                  type="password"
-                  placeholder="Dán khóa API (AI Studio Key)..."
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  className="w-full bg-[#181818] border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-purple-500/40"
-                />
-                <p className="text-[9px] text-white/40 leading-normal pl-1 pt-1">
-                  Khóa API của bạn được lưu an toàn trong local storage trình duyệt, không gửi lên bất cứ máy chủ trung gian nào ngoài Google. Lấy key miễn phí tại{' '}
-                  <a
-                    href="https://aistudio.google.com/"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-purple-400 hover:underline inline-flex items-center"
-                  >
-                    Google AI Studio
-                  </a>.
-                </p>
-              </div>
+
 
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider pl-1">Model / Phiên bản AI</label>

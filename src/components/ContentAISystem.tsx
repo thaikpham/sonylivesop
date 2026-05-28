@@ -187,7 +187,7 @@ Yêu cầu xuất ra cấu hình JSON hợp lệ chứa 3 trường dữ liệu 
           ) : (
             <span className="text-orange-400/80 text-xs font-semibold flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
-              (Chế độ Demo - Nhập API Key ở tab Trợ Lý Tư Vấn để kích hoạt AI trực tiếp)
+              (Chế độ Demo - Offline)
             </span>
           )}
         </p>
@@ -366,7 +366,7 @@ Yêu cầu xuất ra cấu hình JSON hợp lệ chứa 3 trường dữ liệu 
                 <p className="text-[10px] text-white/20 italic">
                   {apiKey.trim() && !errorMsg
                     ? `Nội dung được tạo bởi Gemini AI (${selectedModel})`
-                    : `Nội dung được tạo bởi AI Demo (Offline) • Kết nối Gemini API để có nội dung chuyên sâu hơn`}
+                    : `Nội dung được tạo bởi AI Demo (Offline)`}
                 </p>
               </div>
             </div>
