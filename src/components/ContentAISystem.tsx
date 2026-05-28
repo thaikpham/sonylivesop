@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { GEMINI_API_KEY, DEFAULT_MODEL } from '../config';
 
 const SonyCategories = [
@@ -19,15 +19,71 @@ export const ContentAISystem: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
 
+  // Dynamic Settings
+  const [apiKey, setApiKey] = useState(() => {
+    return localStorage.getItem('gemini_api_key') || GEMINI_API_KEY;
+  });
+  const [selectedModel, setSelectedModel] = useState(() => {
+    let savedModel = localStorage.getItem('gemini_model') || DEFAULT_MODEL;
+    if (savedModel === 'gemini-1.5-flash') {
+      savedModel = 'gemini-2.5-flash';
+    } else if (savedModel === 'gemini-1.5-pro') {
+      savedModel = 'gemini-2.5-pro';
+    }
+    return savedModel;
+  });
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  // Sync settings and migrate on mount
+  useEffect(() => {
+    const savedKey = localStorage.getItem('gemini_api_key') || GEMINI_API_KEY;
+    let savedModel = localStorage.getItem('gemini_model') || DEFAULT_MODEL;
+    let migrated = false;
+    if (savedModel === 'gemini-1.5-flash') {
+      savedModel = 'gemini-2.5-flash';
+      migrated = true;
+    } else if (savedModel === 'gemini-1.5-pro') {
+      savedModel = 'gemini-2.5-pro';
+      migrated = true;
+    }
+    if (migrated) {
+      localStorage.setItem('gemini_model', savedModel);
+    }
+    setApiKey(savedKey);
+    setSelectedModel(savedModel);
+  }, []);
+
   const handleGenerate = async () => {
     if (!productName.trim()) return;
     
     setLoading(true);
     setResult(null);
+    setErrorMsg(null);
     
     const categoryLabel = SonyCategories.find(c => c.id === category)?.label || '';
     const purposeLabel = purpose === 'sales' ? 'Chốt đơn bán hàng' : purpose === 'review' ? 'Đánh giá/Review sản phẩm' : 'Hướng dẫn sử dụng/Kỹ thuật';
     const toneLabel = tone === 'professional' ? 'Chuyên gia thuyết phục' : tone === 'energetic' ? 'Năng động, cuốn hút' : 'Thân thiện, gần gũi';
+
+    const fallbackTitle = `🔥 ${productName} — ${purposeLabel} Livestream Đỉnh Cao!`;
+    const fallbackCaption = `✨ ${productName} từ ${categoryLabel} — Giải pháp hoàn hảo cho Livestream chuyên nghiệp!\n\n🎯 Tính năng lấy nét tự động, màu sắc da tự nhiên và tối ưu hóa âm thanh vượt trội.\n📸 Chất lượng hình ảnh chuyên nghiệp giúp thu hút người xem hơn.\n\n💥 Đặt hàng ngay hôm nay để nhận ưu đãi đặc biệt từ Sony Pro Studio!\n\n#Sony #${productName.replace(/\s+/g, '')} #Livestream #ContentCreator #SonyVietnam`;
+    const fallbackScript = `[MỞ ĐẦU - 30 giây]\n"Xin chào các bạn! Hôm nay mình sẽ giới thiệu đến các bạn ${productName} — một sản phẩm ${categoryLabel} tuyệt vời từ Sony!"\n\n[ĐIỂM NHẤN 1 - Thiết kế & Chất lượng]\n"${productName} sở hữu thiết kế nhỏ gọn nhưng cực kỳ chắc chắn. Chất lượng build rất premium, xứng đáng với thương hiệu Sony."\n\n[ĐIỂM NHẤN 2 - Tính năng AI]\n"Điểm mình thích nhất là tính năng Eye-AF — lấy nét vào mắt cực kỳ nhạy. Kết hợp với Product Showcase, bạn có thể chuyển nét mượt mà từ mặt sang sản phẩm."\n\n[ĐIỂM NHẤN 3 - Trải nghiệm thực tế]\n"Màu da Sony cực đẹp tự nhiên, hồng hào và sắc nét từng chi tiết."\n\n[KÊU GỌI HÀNH ĐỘNG]\n"Đừng bỏ lỡ cơ hội sở hữu ${productName} với giá ưu đãi đặc biệt chỉ có trong buổi Live hôm nay! Comment ngay để được tư vấn nhé!"`;
+
+    // Local settings fallbacks
+    const activeKey = apiKey || localStorage.getItem('gemini_api_key') || GEMINI_API_KEY;
+    const activeModel = selectedModel || localStorage.getItem('gemini_model') || DEFAULT_MODEL;
+
+    // Guard: Bypassing real network request if API Key is not set
+    if (!activeKey.trim()) {
+      setTimeout(() => {
+        setResult({
+          title: fallbackTitle,
+          caption: fallbackCaption,
+          script: fallbackScript
+        });
+        setLoading(false);
+      }, 1000);
+      return;
+    }
 
     try {
       const prompt = `Bạn là trợ lý AI sáng tạo kịch bản cho Sony Việt Nam. 
@@ -45,7 +101,7 @@ Yêu cầu xuất ra cấu hình JSON hợp lệ chứa 3 trường dữ liệu 
 }`;
 
       const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${DEFAULT_MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${activeModel}:generateContent?key=${activeKey}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -59,7 +115,14 @@ Yêu cầu xuất ra cấu hình JSON hợp lệ chứa 3 trường dữ liệu 
       );
 
       if (!response.ok) {
-        throw new Error(`API error: ${response.status} ${response.statusText}`);
+        let errText = `HTTP ${response.status} ${response.statusText}`;
+        try {
+          const errData = await response.json();
+          if (errData?.error?.message) {
+            errText = errData.error.message;
+          }
+        } catch (_) {}
+        throw new Error(errText);
       }
 
       const data = await response.json();
@@ -69,17 +132,15 @@ Yêu cầu xuất ra cấu hình JSON hợp lệ chứa 3 trường dữ liệu 
       const parsed = JSON.parse(cleanJson);
 
       setResult({
-        title: parsed.title || `🔥 ${productName} — ${purposeLabel} Livestream Đỉnh Cao!`,
-        caption: parsed.caption || `✨ ${productName} từ ${categoryLabel} — Giải pháp hoàn hảo cho Livestream chuyên nghiệp!`,
-        script: parsed.script || `[MỞ ĐẦU - 30 giây]\n"Xin chào các bạn! Hôm nay mình sẽ giới thiệu đến các bạn ${productName}..."`
+        title: parsed.title || fallbackTitle,
+        caption: parsed.caption || fallbackCaption,
+        script: parsed.script || fallbackScript
       });
 
-    } catch (error) {
+    } catch (error: any) {
       console.error("AI Generation failed, falling back to local generator:", error);
-      const fallbackTitle = `🔥 ${productName} — ${purposeLabel} Livestream Đỉnh Cao!`;
-      const fallbackCaption = `✨ ${productName} từ ${categoryLabel} — Giải pháp hoàn hảo cho Livestream chuyên nghiệp!\n\n🎯 Tính năng lấy nét tự động, màu sắc da tự nhiên và tối ưu hóa âm thanh vượt trội.\n📸 Chất lượng hình ảnh chuyên nghiệp giúp thu hút người xem hơn.\n\n💥 Đặt hàng ngay hôm nay để nhận ưu đãi đặc biệt từ Sony Pro Studio!\n\n#Sony #${productName.replace(/\s+/g, '')} #Livestream #ContentCreator #SonyVietnam`;
-      const fallbackScript = `[MỞ ĐẦU - 30 giây]\n"Xin chào các bạn! Hôm nay mình sẽ giới thiệu đến các bạn ${productName} — một sản phẩm ${categoryLabel} tuyệt vời từ Sony!"\n\n[ĐIỂM NHẤN 1 - Thiết kế & Chất lượng]\n"${productName} sở hữu thiết kế nhỏ gọn nhưng cực kỳ chắc chắn. Chất lượng build rất premium, xứng đáng với thương hiệu Sony."\n\n[ĐIỂM NHẤN 2 - Tính năng AI]\n"Điểm mình thích nhất là tính năng Eye-AF — lấy nét vào mắt cực kỳ nhạy. Kết hợp với Product Showcase, bạn có thể chuyển nét mượt mà từ mặt sang sản phẩm."\n\n[ĐIỂM NHẤN 3 - Trải nghiệm thực tế]\n"Màu da Sony cực đẹp tự nhiên, hồng hào và sắc nét từng chi tiết."\n\n[KÊU GỌI HÀNH ĐỘNG]\n"Đừng bỏ lỡ cơ hội sở hữu ${productName} với giá ưu đãi đặc biệt chỉ có trong buổi Live hôm nay! Comment ngay để được tư vấn nhé!"`;
-
+      setErrorMsg(error.message || String(error));
+      
       setResult({
         title: fallbackTitle,
         caption: fallbackCaption,
@@ -100,8 +161,19 @@ Yêu cầu xuất ra cấu hình JSON hợp lệ chứa 3 trường dữ liệu 
     <div className="space-y-8 animate-fade pb-20">
       <div className="flex flex-col gap-2">
         <h2 className="text-3xl font-bold shimmer-text">AI Content Generator</h2>
-        <p className="text-white/50 text-sm max-w-xl">
-          Tự động hóa kịch bản livestream và caption chuẩn Sony. <span className="text-green-400/60 text-xs font-semibold">(Đang kết nối qua API Key Gemini của bạn)</span>
+        <p className="text-white/50 text-sm max-w-xl flex items-center gap-2 flex-wrap">
+          Tự động hóa kịch bản livestream và caption chuẩn Sony.
+          {apiKey.trim() ? (
+            <span className="text-green-400/80 text-xs font-semibold flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+              (Đang kết nối qua Gemini API - {selectedModel})
+            </span>
+          ) : (
+            <span className="text-orange-400/80 text-xs font-semibold flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+              (Chế độ Demo - Nhập API Key ở tab Trợ Lý Tư Vấn để kích hoạt AI trực tiếp)
+            </span>
+          )}
         </p>
       </div>
 
@@ -187,6 +259,17 @@ Yêu cầu xuất ra cấu hình JSON hợp lệ chứa 3 trường dữ liệu 
 
         {/* Output Panel */}
         <div className="lg:col-span-2 space-y-6">
+          {errorMsg && (
+            <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-4 text-xs text-red-400 flex items-start gap-2 animate-fade">
+              <span className="material-symbols-outlined text-[16px] mt-0.5">warning</span>
+              <div>
+                <p className="font-bold">Lỗi kết nối Gemini API:</p>
+                <p className="opacity-90">{errorMsg}</p>
+                <p className="opacity-60 mt-1">Đã tự động chuyển đổi sang nội dung Demo cục bộ dưới đây. Vui lòng kiểm tra lại cấu hình API Key và Model trong tab Trợ Lý Tư Vấn.</p>
+              </div>
+            </div>
+          )}
+
           {!result && !loading && (
             <div className="h-full min-h-[400px] border-2 border-dashed border-white/5 rounded-[40px] flex flex-col items-center justify-center text-center p-12 opacity-40">
               <span className="material-symbols-outlined text-6xl mb-4">smart_toy</span>
@@ -264,7 +347,11 @@ Yêu cầu xuất ra cấu hình JSON hợp lệ chứa 3 trường dữ liệu 
               </div>
 
               <div className="flex justify-center pt-4">
-                <p className="text-[10px] text-white/20 italic">Nội dung được tạo bởi AI Demo • Kết nối Gemini API để có nội dung chuyên sâu hơn</p>
+                <p className="text-[10px] text-white/20 italic">
+                  {apiKey.trim() && !errorMsg
+                    ? `Nội dung được tạo bởi Gemini AI (${selectedModel})`
+                    : `Nội dung được tạo bởi AI Demo (Offline) • Kết nối Gemini API để có nội dung chuyên sâu hơn`}
+                </p>
               </div>
             </div>
           )}

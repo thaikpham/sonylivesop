@@ -59,24 +59,39 @@ export const ProductAdvisor: React.FC = () => {
   const [showSettings, setShowSettings] = useState(false);
 
   // Settings State
-  const [apiKey, setApiKey] = useState('');
-  const [selectedModel, setSelectedModel] = useState('gemini-1.5-flash');
-  const [systemInstruction, setSystemInstruction] = useState(DEFAULT_SYSTEM_INSTRUCTION);
+  const [apiKey, setApiKey] = useState(() => {
+    return localStorage.getItem('gemini_api_key') || GEMINI_API_KEY;
+  });
+  const [selectedModel, setSelectedModel] = useState(() => {
+    let savedModel = localStorage.getItem('gemini_model') || DEFAULT_MODEL;
+    if (savedModel === 'gemini-1.5-flash') {
+      savedModel = 'gemini-2.5-flash';
+    } else if (savedModel === 'gemini-1.5-pro') {
+      savedModel = 'gemini-2.5-pro';
+    }
+    return savedModel;
+  });
+  const [systemInstruction, setSystemInstruction] = useState(() => {
+    return localStorage.getItem('gemini_system_instruction') || DEFAULT_SYSTEM_INSTRUCTION;
+  });
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Load settings on mount
+  // Load settings and migrate if necessary on mount
   useEffect(() => {
-    const savedKey = localStorage.getItem('gemini_api_key') || GEMINI_API_KEY;
-    let savedModel = localStorage.getItem('gemini_model') || DEFAULT_MODEL;
+    let savedModel = localStorage.getItem('gemini_model');
+    let migrated = false;
     if (savedModel === 'gemini-1.5-flash') {
-      savedModel = DEFAULT_MODEL;
+      savedModel = 'gemini-2.5-flash';
+      migrated = true;
+    } else if (savedModel === 'gemini-1.5-pro') {
+      savedModel = 'gemini-2.5-pro';
+      migrated = true;
     }
-    const savedInstruction = localStorage.getItem('gemini_system_instruction') || DEFAULT_SYSTEM_INSTRUCTION;
-
-    setApiKey(savedKey);
-    setSelectedModel(savedModel);
-    setSystemInstruction(savedInstruction);
+    if (migrated && savedModel) {
+      localStorage.setItem('gemini_model', savedModel);
+      setSelectedModel(savedModel);
+    }
   }, []);
 
   // Scroll to bottom when messages change
@@ -128,7 +143,14 @@ export const ProductAdvisor: React.FC = () => {
         );
 
         if (!response.ok) {
-          throw new Error(`API error: ${response.status} ${response.statusText}`);
+          let errorMsg = `HTTP ${response.status} ${response.statusText}`;
+          try {
+            const errData = await response.json();
+            if (errData?.error?.message) {
+              errorMsg = errData.error.message;
+            }
+          } catch (_) {}
+          throw new Error(errorMsg);
         }
 
         const data = await response.json();
